@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package org.csc.browserAPI.gens;
+import "address.proto";
+import "block.proto";
+import "tx.proto";
+enum PADIModule {
+	PAM = 0; // 额外的参数
+};
+
+enum PADICommand {
+    GET = 0; // 获取额外的参数  ReqGetAdditional，ResGetAdditional
+    GNS = 1;//获取所有节点列表 ReqGetNodes,ResGetNodes
+    GTC = 2;//查询最近交易柱状图数据
+	REP	= 3;//查询统计信息 ReqGetReportInfo ResGetReportInfo
+	AGG = 4;//首页聚合查询接口 ReqGetAggInfo ResGetAggInfo
+}
+message ReqGetAggInfo{
+	string keyword = 1;//查询关键字
+}
+message ResGetAggInfo{
+	int32 ret =1;
+	string result =2;
+	AddressInfo addressInfo = 3;
+	BlockInfo block = 4;
+	Transaction txs = 5;
+}
+message ReqGetReportInfo {
+	string coin = 1;//coin类型
+	string type = 2; //统计类型
+	int32 splice = 3; // 查询条数
+}
+message ResGetReportInfo {
+	int32 ret = 1;//返回码
+	repeated ReportResult reportResult =2;//查询统计结果
+}
+message ReportResult{
+	string data = 1; // 数据
+	string dataTime = 2; //数据时间
+}
+message ReqGetAdditional {
+}
+message ResGetAdditional {
+	int32 ret = 1;
+	string avgBlockTime = 2;//平均出块时间
+	string gtdps = 3;//每秒产生交易数量
+	int32 txCount = 4;//所有区块中的交易总数
+	string nodesCount = 5;//所有节点数量
+	string dConnectNodes = 6;//已连接的节点数
+	string pConnectNodes = 7;//待连接的节点数
+	string confirmTime = 8;//最新5块中所有交易的平均确认时间
+	
+}
+
+message ReqGetNodes {
+	//每页显示i条数
+	int32 pageSize = 1;
+	//当前页
+	int32 pageNo = 2;
+}
+
+message ResGetNodes {
+	int32 ret = 1;
+	repeated Node nodeInfos = 2;
+	//总条数
+	int32 totalCount = 3;
+
+}
+
+message Node {
+	string status = 1;//节点状态
+	string nodeName = 14;//节点
+	int32 nodeIdIndex = 2;//全网确定之后的节点id
+	string uri = 10;//节点链接支持的协议类型，tcp，http/https，udp，mq……
+	int64 startupTime = 5;//启动时间
+	string publicKey = 6;//该节点的公钥
+	string bcuid = 7;//节点的唯一ID
+	int32 tryNodeIdIndex = 8;//节点的随机id
+	int64 blockCount = 11;//总产生了多少个区块！
+	int64 receiveCount = 13;//总收到多少数据
+	int64 sendCount = 12;//总发送多少数据
+	string type = 15;//节点类型
+}
+
+message ReqGetTxCount {
+
+}
+
+message ResGetTxCount {
+	int32 ret = 1;
+	repeated Count week = 2;
+	repeated Count day = 3;
+	repeated Count hour = 4;
+	repeated Count ten = 5;
+}
+
+message Count {
+	int32 value = 1;
+}

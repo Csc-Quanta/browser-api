@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package org.csc.browserAPI.gens;
+
+enum PTRSModule {
+    TXS = 0; // 交易
+};
+
+enum PTRSCommand {
+    GTT = 0; // 根据 Tx hash 获取 Transaction 详情		ReqGetTxByTxHash,ResGetTxByTxHash
+    GTA = 1; // 根据 address 获取 Transaction 详情		ReqGetTxByAddress,ResGetTxByAddress
+    TXL = 3; // 获取交易列表 ReqGetTxList,ResGetTxList
+}
+
+message ReqGetTxList{
+    //每页显示条数 默认是10条
+    int32 pageSize = 1;
+    //当前页 默认是第一页
+    int32 pageNo = 2;
+}
+message ResGetTxList{
+    int32 ret =  1;
+    //交易列表
+    repeated Transaction txs = 2;
+    //总条数
+    int32 totalCount = 3;
+}
+
+
+
+message ReqGetTxByTxHash {
+    string txHash = 1;
+}
+
+message ResGetTxByTxHash {
+    int32 ret = 1;
+    Transaction txs = 2;
+}
+
+message ReqGetTxByAddress {
+    string address = 1;
+    int32 pageSize = 2;//每页显示条数 默认是10条
+    int32 pageNo = 3; //查询页数据， 默认是1页
+}
+
+message ResGetTxByAddress {
+    int32 ret = 1;
+    repeated Transaction txs = 2;
+}
+
+message Transaction {
+    string txHash = 1;
+    int64 blockNumber = 3;
+    int64 timeStamp = 4;
+    repeated TxInput froms = 5;
+    repeated TxOutput tos = 6;
+    string status = 7;
+    string data = 14 [jstype = JS_NORMAL];
+    //当前这个交易里面的交易总额
+    string totalAmount = 15;
+}
+
+message TxInput {
+    int32 nonce = 1;
+    int32 fee = 2;
+    int32 feeLimit = 3;
+    string address = 4;
+    string amount= 5;
+    string pubKey = 6;
+    string tokenName = 7;
+    string symbol = 8;
+    string cryptoToken = 9;
+}
+
+message TxOutput {
+    string address= 1;
+    string amount= 2;
+    string symbol = 3;
+    string cryptoToken = 4;
+}
+
+message TxSignature {
+    string signature = 1;
+    string pubKey = 2;
+}

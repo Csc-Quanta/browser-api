@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package org.csc.browserAPI.gens;
+
+enum PLCTModule {
+	TRX = 0; // 交易
+};
+
+enum PLCTCommand {
+    REG = 0;//生成用户地址
+    ADD = 1;//增加balance
+    DTX = 2;//发起交易
+    NBL = 3;//打块
+    GBS = 4;//获取所有区块的hash
+    SSS = 5;//start socket service
+}
+
+message ReqReg{
+	int32 count = 1;//生成多少个地址
+}
+
+message RetReg{
+	int32 retCode = 1;//
+	string msg = 2;//
+	string address = 3;//
+	string pub = 4;//
+	string pki = 5;//
+}
+
+message ReqAdd{
+	string address = 1;//
+	int64 balance = 2;//
+	string token = 3;//
+	string symbol = 4;//
+	int32 count = 5;//
+	
+}
+
+message RetAdd {
+	int32 retCode = 1;//
+	string msg = 2;//
+	int64 balance = 3;//
+}
+
+message ReqDtx {
+	string intputAddr = 1;//
+	string intputPuk = 2;//
+	string intputPki = 3;//
+	string outputAddr = 4;//
+	int64 amount = 5;//
+	string token = 6;
+	string symbol = 7;
+	string cryptoToken = 8;
+}
+
+message RetDtx {
+	int32 retCode = 1;//
+	string msg = 2;//
+	string txHash = 3;//
+}
+
+message ReqNbl {
+
+}
+
+message RetNbl {
+	int32 retCode = 1;//
+	string msg = 2;//
+	string blockHash = 3;
+}
+
+message ReqGBS {
+
+}
+
+message RetGBS {
+	int32 retCode = 1;//
+	string msg = 2;//
+	repeated string hashs = 3;
+}
+
+message ReqSSS {
+	string ip = 1;
+	int32 port = 2;
+}
+
+message RetSSS {
+	int32 retCode = 1;//
+}

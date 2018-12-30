@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+import "tx.proto";
+package org.csc.browserAPI.gens;
+
+
+enum PADRModule {
+    ADS = 0; // 账户，合约，合约代码
+};
+
+enum PADRCommand {
+    GAD = 0; // 根据 address 获取 账户 详情		ReqGetAddrDetailByAddr
+    GTX = 1; // 
+};
+
+message ReqGetAddrDetailByAddr {
+	string address = 1;//账户地址
+    int32 pageSize = 2;//每页显示条数
+    int32 pageNo = 3;//当前页
+};
+
+message ResGetAddrDetailByAddr {
+    int32 ret = 1;
+    AddressInfo addressInfo = 2;
+    int32 totalCount =3;//总条数
+};
+
+message AddressInfo {
+    int32 nonce = 1;
+    string balance = 2;
+    repeated string address = 3;
+    repeated Token tokens = 4;
+    repeated CryptoToken cryptoTokens = 5;
+    repeated Transaction txs = 6;
+    repeated Transaction tokenTransactions = 7;
+    repeated Transaction cryptoTokenTransactions = 8;
+    string bcuid = 11;
+};
+
+message Token {
+    string tokenName = 1;
+    string balance = 2;
+    string locked = 3;
+}
+
+message CryptoToken {
+    string symbol = 1; // 用于分类ERC721 Token的标记
+    repeated CryptoTokenValue tokens = 2;
+}
+
+message CryptoTokenValue {
+    string hash = 1; // Token的hash，hash(index,total,code,name,timestamp)
+    int64 timestamp = 2; // Token创建时间
+    int64 index = 3; // 该Token发行时的索引
+    int64 total = 4; // 该Token的发行总数量
+    string code = 5; // Token的编号
+    string name = 6; // Token的名称
+    string owner = 7; // 所有人的账户地址
+    int32 nonce = 8; // 交易次数
+}
