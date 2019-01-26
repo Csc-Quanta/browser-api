@@ -45,7 +45,7 @@ public class GetTheBestBlock extends SessionModules<ReqGetTheBestBlock> {
 		if (block != null) {
 			ret.setBlock(block);
 		}
-		ret.setRet(1);
+		ret.setRplCode(1);
 
 		handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));
 	}

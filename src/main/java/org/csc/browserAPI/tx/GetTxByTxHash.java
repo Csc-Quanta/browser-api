@@ -39,13 +39,13 @@ public class GetTxByTxHash extends SessionModules<ReqGetTxByTxHash>{
 		ResGetTxByTxHash.Builder ret = ResGetTxByTxHash.newBuilder();
 		
 		try{
-			ret.setRet(1);
+			ret.setRplCode(1);
 			if(pb != null && StringUtils.isNotBlank(pb.getTxHash())){
 				ret.setTxs(blockHelper.getTxByTxHashFromDB(pb.getTxHash()));
 			}
 		} catch (Exception e){
 			log.error("get tx error " + e.getMessage());
-			ret.setRet(-1);
+			ret.setRplCode(-1);
 		}
 		handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));
 	}

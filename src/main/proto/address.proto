@@ -20,27 +20,27 @@ message ReqGetAddrDetailByAddr {
 };
 
 message ResGetAddrDetailByAddr {
-    int32 ret = 1;
+    int32 rpl_code = 1;
     AddressInfo addressInfo = 2;
     int32 totalCount =3;//总条数
 };
 
 message AddressInfo {
-    int32 nonce = 1;
-    string balance = 2;
-    repeated string address = 3;
-    repeated Token tokens = 4;
-    repeated CryptoToken cryptoTokens = 5;
-    repeated Transaction txs = 6;
-    repeated Transaction tokenTransactions = 7;
-    repeated Transaction cryptoTokenTransactions = 8;
+    int32 nonce = 1;//交易次数
+    string balance = 2;//账户余额信息
+    repeated string address = 3; //当前账户的联合账户信息
+    repeated Token tokens = 4; //当前账户所拥有的token
+    repeated CryptoToken cryptoTokens = 5; //当前账户所拥有的erc721 token
+    repeated Transaction txs = 6;//当前账户的交易信息
+    repeated Transaction tokenTransactions = 7; //当前账户的erc20的交易信息
+    repeated Transaction cryptoTokenTransactions = 8;//当前账户的erc721的交易信息
     string bcuid = 11;
 };
 
 message Token {
-    string tokenName = 1;
-    string balance = 2;
-    string locked = 3;
+    string tokenName = 1; // token名称
+    string balance = 2; //token余额
+    string locked = 3; //锁定金额
 }
 
 message CryptoToken {

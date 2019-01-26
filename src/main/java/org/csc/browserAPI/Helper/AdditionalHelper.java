@@ -16,12 +16,16 @@ import onight.tfw.otransio.api.beans.FramePacket;
 import onight.tfw.outils.conf.PropHelper;
 import onight.tfw.outils.serialize.JsonSerializer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
-import org.csc.backend.ordbgens.bc.entity.*;
+import org.csc.backend.ordbgens.bc.entity.ZCBcBlock;
+import org.csc.backend.ordbgens.bc.entity.ZCBcBlockExample;
+import org.csc.backend.ordbgens.bc.entity.ZCBcNode;
+import org.csc.backend.ordbgens.bc.entity.ZCBcNodeExample;
 import org.csc.bcapi.EncAPI;
 import org.csc.browserAPI.dao.Daos;
 import org.csc.browserAPI.gens.Additional;
@@ -38,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author jack
@@ -67,7 +72,7 @@ public class AdditionalHelper implements ActorService {
 	private static PropHelper props = new PropHelper(null);
 	@Deprecated
 	private static String QUERY_TX = "http://128.14.133.222:9200/transaction/_search";
-	private static String QUERY_NODE = "http://127.0.0.1:8000/cks/pzp/pbinf.do";// 30802
+	private static String QUERY_NODE;// 30802
 
 	static {
 		QUERY_TX = props.get("query_tx", "http://128.14.133.222:9200/transaction/_search");
@@ -106,7 +111,9 @@ public class AdditionalHelper implements ActorService {
 				}
 			});
 
-
+	/**
+	 * 初始化节点信息
+	 */
 	public void initNodes() {
 		List<ZCBcNode> nodeList = getNodesFromBC();
 		for(ZCBcNode bcNode:nodeList){
@@ -114,8 +121,9 @@ public class AdditionalHelper implements ActorService {
 				String oldUri = bcNode.getUri();
 				bcNode.setUri(oldUri.substring(0,oldUri.length()-1));
 			}
-			ZCBcNodeKey nodeKey = new ZCBcNodeKey();
-            nodeKey.setUri(bcNode.getUri());
+			ZCBcNode nodeKey = new ZCBcNode();
+			nodeKey.setCoinAddress(bcNode.getCoinAddress());
+            //设置更新时间和创建时间
 			ZCBcNode node = daos.bcNodeDao.selectByPrimaryKey(nodeKey);
 			if(node == null){
 				daos.bcNodeDao.insertSelective(bcNode);
@@ -123,9 +131,16 @@ public class AdditionalHelper implements ActorService {
 				daos.bcNodeDao.updateByPrimaryKeySelective(bcNode);
 			}
 		}
-
+		ZCBcNodeExample example = new ZCBcNodeExample();
+		example.createCriteria().andStatusEqualTo("PENDING")
+				.addCriterion(" update_Time <="+DateUtils.addDays(new Date(),-7).getTime());
+		daos.bcNodeDao.deleteByExample(example);
 	}
 
+	/**
+	 * 从p22p上获取其他节点的状态
+	 * @return
+	 */
 	public List<ZCBcNode> getNodesFromBC() {
 		List<Node> dposList = getDposNode();
 		List<Node> raftList = getRaftNodes();
@@ -161,6 +176,9 @@ public class AdditionalHelper implements ActorService {
 			bcNode.setTryNodeIdx(node.getTryNodeIdIndex());
 			bcNode.setType(node.getType());
 			bcNode.setUri(node.getUri());
+			bcNode.setCoinAddress(node.getCoinAddress());
+			bcNode.setUpdateTime(new Date());
+			bcNode.setCreateTime(new Date());
 		}
 		return bcNode;
 	}
@@ -309,20 +327,39 @@ public class AdditionalHelper implements ActorService {
 			log.warn("从数据库中查询 查询结果为空");
 			return null;
 		}
+		//查询这些节点的打块数量
+		List<String> coinAddressList = zcBcNodes.stream().map(nodes-> nodes.getCoinAddress())
+				.collect(Collectors.toList());
+		ZCBcBlockExample bcBlockExample = new ZCBcBlockExample();
+		bcBlockExample.createCriteria().andBmAddressIn(coinAddressList)
+		.andBlockStatusEqualTo("1");
+		bcBlockExample.setGroupByClause("BM_ADDRESS");
+		bcBlockExample.setSelectCols("count(0) BH_NUMBER,BM_ADDRESS");
+		List<Object> objectList = daos.bcBlockDao.selectByExample(bcBlockExample);
+		//查询总块数据
+		bcBlockExample = new ZCBcBlockExample();
+		bcBlockExample.createCriteria().andBlockStatusEqualTo("1");
+		int count = daos.bcBlockDao.countByExample(bcBlockExample);
+		//转换数据
+		List<ZCBcBlock> zcBcBlocks = JSON.parseArray(JSON.toJSONString(objectList),ZCBcBlock.class);
 		List<Node> nodes = new ArrayList<>();
 		zcBcNodes.forEach(node->{
 			Node.Builder nodeBuilder = Node.newBuilder();
 			nodeBuilder.setBcuid(node.getBcuid());
-			nodeBuilder.setBlockCount(node.getBlockCc().longValue());
 			nodeBuilder.setNodeName(node.getNodeName());
 			nodeBuilder.setNodeIdIndex(node.getNodeIdx());
 			nodeBuilder.setStartupTime(node.getStartupTime().longValue());
 			nodeBuilder.setUri(node.getUri());
 			nodeBuilder.setTryNodeIdIndex(node.getTryNodeIdx());
-			nodeBuilder.setReceiveCount(node.getRecvCc().longValue());
-			nodeBuilder.setSendCount(node.getSendCc().longValue());
 			nodeBuilder.setStatus(node.getStatus());
 			nodeBuilder.setType(node.getType());
+			zcBcBlocks.forEach(zcBcBlock ->{
+				if(zcBcBlock.getBmAddress().equals(node.getCoinAddress())) {
+					nodeBuilder.setBlockCount(zcBcBlock.getBhNumber().longValue());
+					nodeBuilder.setReceiveCount(count-nodeBuilder.getBlockCount());
+					nodeBuilder.setSendCount(nodeBuilder.getBlockCount());
+				}
+			});
 			nodes.add(nodeBuilder.build());
 		});
 		Additional.ResGetNodes.Builder builder = Additional.ResGetNodes.newBuilder();
@@ -478,7 +515,9 @@ public class AdditionalHelper implements ActorService {
 			block_cc = jn.get("block_cc").asLong();
 			node.setBlockCount(block_cc);
 		}
-
+		if (jn.has("co_address")) {
+			node.setCoinAddress(jn.get("co_address").asText());
+		}
 		node.setStatus(status);
 		node.setType(type);
 

@@ -42,7 +42,7 @@ public class GetNodes extends SessionModules<ReqGetNodes>{
 		if(builde == null ){
 			builde = Additional.ResGetNodes.newBuilder();
 		}
-		builde.setRet(1);
+		builde.setRplCode(1);
 		handler.onFinished(PacketHelper.toPBReturn(pack, builde.build()));
 	}
 }

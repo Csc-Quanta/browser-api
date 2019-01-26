@@ -40,7 +40,7 @@ public class GetTxByAddress extends SessionModules<ReqGetTxByAddress>{
 		int pageSize = NumberUtils.INTEGER_ZERO.equals(pb.getPageSize())?10:pb.getPageSize();
 		int pageNo = NumberUtils.INTEGER_ZERO.equals(pb.getPageNo())?1:pb.getPageNo();
 		try{
-			ret.setRet(1);
+			ret.setRplCode(1);
 			
 			if(pb != null && StringUtils.isNotBlank(pb.getAddress())){
 				Address.ResGetAddrDetailByAddr.Builder builder = addressHelper.getTxByAddress(pb.getAddress(),pageSize,pageNo);
@@ -50,7 +50,7 @@ public class GetTxByAddress extends SessionModules<ReqGetTxByAddress>{
 			}
 		} catch (Exception e){
 			log.error("get tx error " + e.getMessage());
-			ret.setRet(-1);
+			ret.setRplCode(-1);
 		}
 		handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));
 	}

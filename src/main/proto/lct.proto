@@ -7,12 +7,12 @@ enum PLCTModule {
 };
 
 enum PLCTCommand {
-    REG = 0;//生成用户地址
-    ADD = 1;//增加balance
-    DTX = 2;//发起交易
-    NBL = 3;//打块
-    GBS = 4;//获取所有区块的hash
-    SSS = 5;//start socket service
+    REG = 0;//生成用户地址(不用)
+    ADD = 1;//增加balance(不用)
+    DTX = 2;//发起交易(不用)
+    NBL = 3;//打块(不用)
+    GBS = 4;//获取所有区块的hash(不用)
+    SSS = 5;//start socket service (不用)
 }
 
 message ReqReg{
@@ -20,7 +20,7 @@ message ReqReg{
 }
 
 message RetReg{
-	int32 retCode = 1;//
+	int32 rpl_codeCode = 1;//
 	string msg = 2;//
 	string address = 3;//
 	string pub = 4;//
@@ -37,7 +37,7 @@ message ReqAdd{
 }
 
 message RetAdd {
-	int32 retCode = 1;//
+	int32 rpl_codeCode = 1;//
 	string msg = 2;//
 	int64 balance = 3;//
 }
@@ -54,7 +54,7 @@ message ReqDtx {
 }
 
 message RetDtx {
-	int32 retCode = 1;//
+	int32 rpl_codeCode = 1;//
 	string msg = 2;//
 	string txHash = 3;//
 }
@@ -64,7 +64,7 @@ message ReqNbl {
 }
 
 message RetNbl {
-	int32 retCode = 1;//
+	int32 rpl_codeCode = 1;//
 	string msg = 2;//
 	string blockHash = 3;
 }
@@ -74,7 +74,7 @@ message ReqGBS {
 }
 
 message RetGBS {
-	int32 retCode = 1;//
+	int32 rpl_codeCode = 1;//
 	string msg = 2;//
 	repeated string hashs = 3;
 }
@@ -85,5 +85,5 @@ message ReqSSS {
 }
 
 message RetSSS {
-	int32 retCode = 1;//
+	int32 rpl_codeCode = 1;//
 }

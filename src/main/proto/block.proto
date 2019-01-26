@@ -15,6 +15,14 @@ enum PBLKCommand {
 	GTH = 4; // 根据 tx hash 获取 block 详情	ReqGetBlockByTxHash，ResGetBlockByTxHash
 	GGB = 5; // 获取创始块 ReqGetGenisBlock,RetGetGenisBlock
 	GBX = 6;//通过区块高度获取区块里面的交易 ReqGetTxByBlkHeight ResGetTxByBlkHeight
+	GBT = 7;//获取最新的block ReqGetTheBestBlock		ResGetBestBlockAndTxInfo
+}
+
+message ResGetBestBlockAndTxInfo{
+	int32 rpl_code = 1;
+	BlockInfo block = 2;
+	int32 txCount =3;//交易数
+	string txAmountCount = 4;//交易总额
 }
 message ReqGetTxByBlkHeight{
 	int32 pageSize = 1;//每页显示条数
@@ -22,7 +30,7 @@ message ReqGetTxByBlkHeight{
 	int32 blockNumber = 3;//块的高度
 }
 message ResGetTxByBlkHeight{
-	int32 ret = 1;
+	int32 rpl_code = 1;
 	//交易信息
 	repeated Transaction txs = 2;
 	//总条数
@@ -35,7 +43,7 @@ message ReqGetGenisBlock {
 }
 
 message RetGetGenisBlock {
-	int32 ret = 1;
+	int32 rpl_code = 1;
 	BlockInfo block = 2;
 }
 
@@ -44,7 +52,7 @@ message ReqGetTheBestBlock {
 }
 
 message ResGetTheBestBlock {
-	int32 ret = 1;
+	int32 rpl_code = 1;
 	BlockInfo block = 2;
 }
 
@@ -54,9 +62,9 @@ message ReqGetBatchBlocks {
 }
 
 message ResGetBatchBlocks {
-	int32 ret = 1;
+	int32 rpl_code = 1;
 	repeated BlockInfo blocks = 2;
-	int64 totalCount = 3;
+	int64 totalCount = 3;//总条数
 }
 
 message ReqGetBlockByBlockHash {
@@ -64,7 +72,7 @@ message ReqGetBlockByBlockHash {
 }
 
 message ResGetBlockByBlockHash {
-	int32 ret = 1;
+	int32 rpl_code = 1;
 	BlockInfo block = 2;
 }
 
@@ -73,7 +81,7 @@ message ReqGetBlockByBlockHeight {
 }
 
 message ResGetBlockByBlockHeight {
-	int32 ret = 1;
+	int32 rpl_code = 1;
 	BlockInfo block = 2;
 }
 
@@ -82,7 +90,7 @@ message ReqGetBlockByTxHash {
 }
 
 message ResGetBlockByTxHash {
-	int32 ret = 1;
+	int32 rpl_code = 1;
 	BlockInfo block = 2;
 }
 
@@ -92,18 +100,18 @@ message BlockInfo {
 }
 
 message BlockHeader {
-	string parentHash = 1;
-	string txTrieRoot = 3;
-	int64 timestamp = 4;
+	string parentHash = 1;//上一块的区块hash
+	string txTrieRoot = 3; //交易数根hash
+	int64 timestamp = 4; //区块产生的时间
 	int64 blockNumber = 5;//number
 	string extData = 7 [jstype = JS_NORMAL];
-	string nonce = 8;
-	string blockHash = 9;
-	repeated string txHashs = 10;
-	int32 txCount = 11;
-	int64 sliceId = 12;
+	string nonce = 8; //交易次数
+	string blockHash = 9;//区块hash
+	repeated string txHashs = 10; //当前区块包含的交易hash
+	int32 txCount = 11;//交易总数
+	int64 sliceId = 12; // 分片id
 	BlockMiner miner = 13;//不完全信息，仅包含 balance,address.bcuid为新增字段，放在addressInfo中
-	repeated string nodes = 14;
+	repeated string nodes = 14; // 节点信息
 	string avetx = 15;//块内平均交易时间
 }
 
@@ -112,9 +120,9 @@ message BlockBody {
 }
 
 message BlockMiner {
-	string node = 1;
-	string reward = 3;
-	string address = 4;
+	string node = 1;//当前矿工节点
+	string reward = 3; //当前矿工奖励
+	string address = 4;//当前矿工的账户地址
 	string bcuid = 5;
 }
 

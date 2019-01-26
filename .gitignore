@@ -177,6 +177,7 @@ fabric.properties
 ### Gradle template
 .gradle
 /build/
+browser-api.iml
 
 # Ignore Gradle GUI config
 gradle-app.setting

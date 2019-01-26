@@ -62,7 +62,7 @@ public class GetBatchBlocks extends SessionModules<ReqGetBatchBlocks> {
 			}
 		}
 
-		ret.setRet(1);
+		ret.setRplCode(1);
 		handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));
 	}
 }

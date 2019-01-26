@@ -10,8 +10,14 @@ enum PTRSCommand {
     GTT = 0; // 根据 Tx hash 获取 Transaction 详情		ReqGetTxByTxHash,ResGetTxByTxHash
     GTA = 1; // 根据 address 获取 Transaction 详情		ReqGetTxByAddress,ResGetTxByAddress
     TXL = 3; // 获取交易列表 ReqGetTxList,ResGetTxList
+    TXC = 4;//获取交易数量信息 ReqGetTxCountInfo，ResGetTxCountInfo
 }
-
+message ReqGetTxCountInfo{}
+message ResGetTxCountInfo{
+    int32 rpl_code = 1;
+    int32 txCount =2;//交易数
+    string txAmountCount = 3;//交易总额
+}
 message ReqGetTxList{
     //每页显示条数 默认是10条
     int32 pageSize = 1;
@@ -19,7 +25,7 @@ message ReqGetTxList{
     int32 pageNo = 2;
 }
 message ResGetTxList{
-    int32 ret =  1;
+    int32 rpl_code =  1;
     //交易列表
     repeated Transaction txs = 2;
     //总条数
@@ -33,7 +39,7 @@ message ReqGetTxByTxHash {
 }
 
 message ResGetTxByTxHash {
-    int32 ret = 1;
+    int32 rpl_code = 1;
     Transaction txs = 2;
 }
 
@@ -44,7 +50,7 @@ message ReqGetTxByAddress {
 }
 
 message ResGetTxByAddress {
-    int32 ret = 1;
+    int32 rpl_code = 1;
     repeated Transaction txs = 2;
 }
 
@@ -61,25 +67,25 @@ message Transaction {
 }
 
 message TxInput {
-    int32 nonce = 1;
-    int32 fee = 2;
-    int32 feeLimit = 3;
-    string address = 4;
-    string amount= 5;
-    string pubKey = 6;
-    string tokenName = 7;
-    string symbol = 8;
-    string cryptoToken = 9;
+    int32 nonce = 1;//交易次数
+    int32 fee = 2;//交易手续费
+    int32 feeLimit = 3;//交易费限制
+    string address = 4;//交易地址
+    string amount= 5;//交易金额
+    string pubKey = 6;//当前账户的公钥
+    string tokenName = 7;//需要交易的token名称
+    string symbol = 8;//token的简称
+    string cryptoToken = 9;//erc721 的token
 }
 
 message TxOutput {
-    string address= 1;
-    string amount= 2;
-    string symbol = 3;
-    string cryptoToken = 4;
+    string address= 1; //交易接收方的地址
+    string amount= 2;//交易金额
+    string symbol = 3;//token的简称
+    string cryptoToken = 4;//erc721 的名称
 }
 
 message TxSignature {
-    string signature = 1;
-    string pubKey = 2;
+    string signature = 1; //签名信息
+    string pubKey = 2;//公钥
 }

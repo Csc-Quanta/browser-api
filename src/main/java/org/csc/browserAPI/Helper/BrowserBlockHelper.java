@@ -54,11 +54,13 @@ public class BrowserBlockHelper implements ActorService {
 			return null;
 		}
 		ZCBcMtxInputExample bcMtxInputExample = new ZCBcMtxInputExample();
-		bcMtxInputExample.createCriteria().andMtxHashEqualTo(txHash);
+		bcMtxInputExample.createCriteria().andMtxHashEqualTo(txHash)
+				.andTxStatusEqualTo("1");
 		List<Object> objs = daos.getBcMtxInputDao().selectByExample(bcMtxInputExample);
 		List<ZCBcMtxInput> bcMtxInputs = JSON.parseArray(JSON.toJSONString(objs),ZCBcMtxInput.class);
 		ZCBcMtxOutputExample bcMtxOutputExample = new ZCBcMtxOutputExample();
-		bcMtxOutputExample.createCriteria().andMtxHashEqualTo(txHash);
+		bcMtxOutputExample.createCriteria().andMtxHashEqualTo(txHash)
+				.andTxStatusEqualTo("1");
 		List<Object> outObjs = daos.getBcMtxOutputDao().selectByExample(bcMtxInputExample);
 		List<ZCBcMtxOutput> bcMtxOutputs = JSON.parseArray(JSON.toJSONString(outObjs),ZCBcMtxOutput.class);
 		List<Tx.TxInput> inputList = new ArrayList<>();

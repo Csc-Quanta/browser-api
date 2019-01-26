@@ -170,7 +170,7 @@ public class WsServer extends WebSocketServer {
 					BEST_HEIGHT = height;
 					/*List<BlockInfo> list = blockHelper.getBatchBlocks(1, 10);
 					ResGetBatchBlocks.Builder ret = ResGetBatchBlocks.newBuilder();
-					ret.setRet(1);
+					ret.setRplCode(1);
 					if(list != null && !list.isEmpty()){
 						for (BlockInfo block : list) {
 							ret.addBlocks(block);

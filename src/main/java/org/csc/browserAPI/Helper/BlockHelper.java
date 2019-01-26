@@ -84,7 +84,8 @@ public class BlockHelper implements ActorService {
 	 */
 	public ZCBcBlock getBlockByBlockHash(String blockHash){
 		ZCBcBlockExample blackExp = new ZCBcBlockExample();
-		blackExp.createCriteria().andBhBlockHashEqualTo(blockHash);
+		blackExp.createCriteria().andBhBlockHashEqualTo(blockHash)
+				.andBlockStatusEqualTo("1");
 		List<Object> blackList = daos.bcBlockDao.selectByExample(blackExp);
 		if(blackList==null || blackList.isEmpty()){
 			return null;

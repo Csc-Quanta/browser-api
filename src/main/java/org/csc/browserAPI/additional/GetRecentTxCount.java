@@ -39,7 +39,7 @@ public class GetRecentTxCount extends SessionModules<ReqGetTxCount>{
 	public void onPBPacket(final FramePacket pack, final ReqGetTxCount pb, final CompleteHandler handler) {
 		ResGetTxCount.Builder ret = ResGetTxCount.newBuilder();
 		additionalHelper.searchTx(ret, System.currentTimeMillis());
-		ret.setRet(1);
+		ret.setRplCode(1);
 		handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));
 	}
 }

@@ -49,7 +49,7 @@ public class GetAggInfo extends SessionModules<Additional.ReqGetAggInfo> {
     public void onPBPacket(final FramePacket pack, final Additional.ReqGetAggInfo pb, final CompleteHandler handler) {
         Additional.ResGetAggInfo.Builder ret = Additional.ResGetAggInfo.newBuilder();
         String keyword = pb.getKeyword();
-        ret.setRet(1);
+        ret.setRplCode(1);
         if(StringUtils.isBlank(keyword)){
             log.info("入参信息为空 返回1");
             handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));

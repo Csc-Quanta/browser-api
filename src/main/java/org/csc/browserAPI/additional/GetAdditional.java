@@ -37,7 +37,7 @@ public class GetAdditional extends SessionModules<Additional.ReqGetAdditional>{
 	public void onPBPacket(final FramePacket pack, final Additional.ReqGetAdditional pb, final CompleteHandler handler) {
 		ResGetAdditional.Builder ret = ResGetAdditional.newBuilder();
 		ret = additionalHelper.getAdditional();
-		ret.setRet(1);
+		ret.setRplCode(1);
 		handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));
 	}
 }

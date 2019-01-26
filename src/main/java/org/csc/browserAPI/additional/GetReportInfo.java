@@ -37,11 +37,11 @@ public class GetReportInfo extends SessionModules<Additional.ReqGetReportInfo> {
         QueryReportHelper queryReportHelper = reportUtil.getReportHelperMap().get(pb.getType());
         if(queryReportHelper == null){
             log.warn("不存在的报表类型：{}",pb.getType());
-            ret.setRet(-1);
+            ret.setRplCode(-1);
             handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));
             return;
         }
-        ret.setRet(1);
+        ret.setRplCode(1);
         List<Additional.ReportResult> list = queryReportHelper.queryReport(pb);
         ret.addAllReportResult(list);
         handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));

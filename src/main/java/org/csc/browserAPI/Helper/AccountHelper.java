@@ -54,7 +54,7 @@ public class AccountHelper implements ActorService {
         reqParam.put("address", address);
         String[] nodeUrls = QUERY_NODE.split(",");
         for(String nodeUrl : nodeUrls) {
-            FramePacket fp = PacketHelper.buildUrlFromJson(JsonSerializer.formatToString(reqParam), "POST", QUERY_NODE+"/cks/api/pbgac.do");
+            FramePacket fp = PacketHelper.buildUrlFromJson(JsonSerializer.formatToString(reqParam), "POST", nodeUrl+"/cks/api/pbgac.do");
             try {
                 val nodeRet = sender.send(fp, 3000);
                 if (nodeRet.getBody() != null && nodeRet.getBody().length > 0) {
@@ -62,31 +62,33 @@ public class AccountHelper implements ActorService {
                     if (jsonObject != null) {
                         // 相应的要添加节点的类型（raft、dpos）和节点的状态（pending、direct）
                         if (jsonObject.has("account")) {
-                            Map<String, Object> map = JSON.parseObject(JSON.toJSONString(jsonObject.get("account")), Map.class);
+                            Map<String, Object> map = JSON.parseObject(jsonObject.get("account").toString(), Map.class);
                             builder.setNonce(Integer.parseInt(map.get("nonce").toString()));
-                            String balance = map.get("balance").toString();
+                            String balance = map.get("balance")!=null?map.get("balance").toString():"";
                             builder.setBalance(ByteString.copyFrom(ByteUtil
                                     .bigIntegerToBytes(new BigInteger(StringUtils.isBlank(balance)?"0":balance))));
-                            String max = map.get("max").toString();
+                            String max = map.get("max")!=null?map.get("max").toString():"";
                             builder.setMax(ByteString.copyFrom(ByteUtil
                                     .bigIntegerToBytes(new BigInteger(StringUtils.isBlank(max)?"0":max))));
-                            String acceptMax = map.get("acceptMax").toString();
-                            String acceptLimit = map.get("acceptLimit").toString();
+                            String acceptMax = map.get("acceptMax")!=null?map.get("acceptMax").toString():"";
+                            String acceptLimit = map.get("acceptLimit")!=null?map.get("acceptLimit").toString():"";
                             builder.setAcceptMax(ByteString.copyFrom(ByteUtil
                                     .bigIntegerToBytes(new BigInteger(StringUtils.isBlank(acceptMax)?"0":acceptMax))));
                             builder.setAcceptLimit(Integer.parseInt(acceptLimit));
                             List<Act.AccountTokenValue> tokenValues = new ArrayList<>();
-                            List<Map> maps = JSON.parseArray(JSON.toJSONString(map.get("tokens")),Map.class);
-                            for(Map tokenMap : maps){
-                                Act.AccountTokenValue.Builder tokenValue = Act.AccountTokenValue.newBuilder();
-                                tokenValue.setToken(tokenMap.get("token").toString());
-                                String tokenBalace = tokenMap.get("balance").toString();
-                                tokenValue.setBalance(ByteString.copyFrom(ByteUtil
-                                        .bigIntegerToBytes(new BigInteger(StringUtils.isBlank(tokenBalace)?"0":tokenBalace))));
-                                String locked = tokenMap.get("locked").toString();
-                                tokenValue.setLocked(ByteString.copyFrom(ByteUtil
-                                        .bigIntegerToBytes(new BigInteger(StringUtils.isBlank(locked)?"0":locked))));
-                                tokenValues.add(tokenValue.build());
+                            List<Map> maps = JSON.parseArray(map.get("tokens")!=null?map.get("tokens").toString():"",Map.class);
+                            if(maps!=null) {
+                                for (Map tokenMap : maps) {
+                                    Act.AccountTokenValue.Builder tokenValue = Act.AccountTokenValue.newBuilder();
+                                    tokenValue.setToken(tokenMap.get("token") != null ? tokenMap.get("token").toString() : "");
+                                    String tokenBalace = tokenMap.get("balance") != null ? tokenMap.get("balance").toString() : "";
+                                    tokenValue.setBalance(ByteString.copyFrom(ByteUtil
+                                            .bigIntegerToBytes(new BigInteger(StringUtils.isBlank(tokenBalace) ? "0" : tokenBalace))));
+                                    String locked = tokenMap.get("locked") != null ? tokenMap.get("locked").toString() : "";
+                                    tokenValue.setLocked(ByteString.copyFrom(ByteUtil
+                                            .bigIntegerToBytes(new BigInteger(StringUtils.isBlank(locked) ? "0" : locked))));
+                                    tokenValues.add(tokenValue.build());
+                                }
                             }
                             builder.addAllTokens(tokenValues);
                             return builder;
@@ -95,8 +97,8 @@ public class AccountHelper implements ActorService {
                 } else {
                     log.warn("this url :{} query address is empty",nodeUrl);
                 }
-            } catch (IOException e) {
-                log.error(String.format("get node info error : %s", e.getMessage()));
+            } catch (Exception e) {
+                log.error("url:{} get node info error : {}",nodeUrl,e);
             }
         }
         return null;

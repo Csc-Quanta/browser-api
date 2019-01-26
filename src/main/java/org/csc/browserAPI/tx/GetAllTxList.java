@@ -55,7 +55,7 @@ public class GetAllTxList extends SessionModules<Tx.ReqGetTxList> {
         List<Object> objects = daos.getBcMultiTransactionDao()
                 .selectByExample(bcMutilTransactonExample);
         if(objects==null || objects.isEmpty()){
-            ret.setRet(1);
+            ret.setRplCode(1);
             handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));
             return;
         }
@@ -86,7 +86,7 @@ public class GetAllTxList extends SessionModules<Tx.ReqGetTxList> {
         bcMutilTransactonExample.createCriteria().andTxTypeNotEqualTo(Constant.COIN_BASE_TRANS_TYPE)
                 .andTxStatusEqualTo("1");
         int totalCount = daos.getBcMultiTransactionDao().countByExample(bcMutilTransactonExample);
-        ret.setRet(1);
+        ret.setRplCode(1);
         ret.addAllTxs(txList);
         ret.setTotalCount(totalCount);
         handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));

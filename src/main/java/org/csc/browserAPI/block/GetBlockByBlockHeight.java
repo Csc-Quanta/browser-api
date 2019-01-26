@@ -49,7 +49,7 @@ public class GetBlockByBlockHeight extends SessionModules<ReqGetBlockByBlockHeig
 				ret.setBlock(blockInfo);
 			}
 			
-			ret.setRet(1);
+			ret.setRplCode(1);
 		}
 //
 		handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));

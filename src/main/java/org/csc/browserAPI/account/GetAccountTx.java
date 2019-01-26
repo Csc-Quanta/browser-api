@@ -49,7 +49,7 @@ public class GetAccountTx extends SessionModules<ReqGetAddrDetailByAddr> {
 				addrInfo = ResGetAddrDetailByAddr.newBuilder();
 			}
 		}
-		addrInfo.setRet(1);
+		addrInfo.setRplCode(1);
 		handler.onFinished(PacketHelper.toPBReturn(pack, addrInfo.build()));
 	}
 }

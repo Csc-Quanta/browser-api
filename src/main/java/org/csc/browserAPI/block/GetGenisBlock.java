@@ -41,7 +41,7 @@ public class GetGenisBlock extends SessionModules<ReqGetGenisBlock> {
 		if (block != null) {
 			ret.setBlock(block);
 		}
-		ret.setRet(1);
+		ret.setRplCode(1);
 
 		handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));
 	}

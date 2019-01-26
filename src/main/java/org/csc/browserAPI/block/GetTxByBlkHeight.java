@@ -43,12 +43,12 @@ public class GetTxByBlkHeight extends SessionModules<Block.ReqGetTxByBlkHeight> 
         Map<String,Object> resultMap = blockHelper.oBlock2BlockInfo(blockEntity,pageSize,pageNo);
         if(resultMap == null){
             log.info("查询结果为null ，不存在的区块高度：{}",pb.getBlockNumber());
-            ret.setRet(1);
+            ret.setRplCode(1);
             return;
         }
         ret.addAllTxs((List<Tx.Transaction>)resultMap.get("list"));
         ret.setTotalCount((Integer) resultMap.get("count"));
-        ret.setRet(1);
+        ret.setRplCode(1);
         handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));
     }
 }

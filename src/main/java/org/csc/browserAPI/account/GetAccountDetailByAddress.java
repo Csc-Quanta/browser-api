@@ -43,7 +43,7 @@ public class GetAccountDetailByAddress extends SessionModules<ReqGetAddrDetailBy
 			AddressInfo addrInfo = addressHelper.getAccountByAddress(pb.getAddress());
 			if(addrInfo != null)
 				ret.setAddressInfo(addrInfo);
-			ret.setRet(1);
+			ret.setRplCode(1);
 		}
 		handler.onFinished(PacketHelper.toPBReturn(pack, ret.build()));
 	}

@@ -11,7 +11,7 @@ enum PADIModule {
 enum PADICommand {
     GET = 0; // 获取额外的参数  ReqGetAdditional，ResGetAdditional
     GNS = 1;//获取所有节点列表 ReqGetNodes,ResGetNodes
-    GTC = 2;//查询最近交易柱状图数据
+    GTC = 2;//查询最近交易柱状图数据(不用)
 	REP	= 3;//查询统计信息 ReqGetReportInfo ResGetReportInfo
 	AGG = 4;//首页聚合查询接口 ReqGetAggInfo ResGetAggInfo
 }
@@ -19,19 +19,19 @@ message ReqGetAggInfo{
 	string keyword = 1;//查询关键字
 }
 message ResGetAggInfo{
-	int32 ret =1;
-	string result =2;
-	AddressInfo addressInfo = 3;
-	BlockInfo block = 4;
-	Transaction txs = 5;
+	int32 rpl_code =1;
+	string result =2; //当前查询是什么查询 0:未查询到任何信息 1：普通账户地址，2：矿工的地址，3：交易的hash，4：区块的高度，5：区块的hash
+	AddressInfo addressInfo = 3; //地址信息
+	BlockInfo block = 4; //区块信息
+	Transaction txs = 5; //交易信息
 }
 message ReqGetReportInfo {
-	string coin = 1;//coin类型
+	string coin = 1;//coin类型统计类型 待补充 every_day_tx_count：每日交易笔数，every_day_tx_amount_count :查询每日交易额，every_day_blk_reward_count：查询每日区块奖励，every_day_active_count：查询每日活跃人数
 	string type = 2; //统计类型
 	int32 splice = 3; // 查询条数
 }
 message ResGetReportInfo {
-	int32 ret = 1;//返回码
+	int32 rpl_code = 1;//返回码
 	repeated ReportResult reportResult =2;//查询统计结果
 }
 message ReportResult{
@@ -41,7 +41,7 @@ message ReportResult{
 message ReqGetAdditional {
 }
 message ResGetAdditional {
-	int32 ret = 1;
+	int32 rpl_code = 1;
 	string avgBlockTime = 2;//平均出块时间
 	string gtdps = 3;//每秒产生交易数量
 	int32 txCount = 4;//所有区块中的交易总数
@@ -60,8 +60,8 @@ message ReqGetNodes {
 }
 
 message ResGetNodes {
-	int32 ret = 1;
-	repeated Node nodeInfos = 2;
+	int32 rpl_code = 1;
+	repeated Node nodeInfos = 2; // 节点信息
 	//总条数
 	int32 totalCount = 3;
 
@@ -80,6 +80,7 @@ message Node {
 	int64 receiveCount = 13;//总收到多少数据
 	int64 sendCount = 12;//总发送多少数据
 	string type = 15;//节点类型
+	string coinAddress = 16;//节点账户地址
 }
 
 message ReqGetTxCount {
@@ -87,7 +88,7 @@ message ReqGetTxCount {
 }
 
 message ResGetTxCount {
-	int32 ret = 1;
+	int32 rpl_code = 1;
 	repeated Count week = 2;
 	repeated Count day = 3;
 	repeated Count hour = 4;

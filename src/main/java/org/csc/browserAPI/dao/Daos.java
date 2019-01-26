@@ -31,17 +31,11 @@ public class Daos implements ActorService, IJPAClient{
     public OJpaDAO<ZCBcMutilTransaction> bcMultiTransactionDao;
 
     @StoreDAO
-    public OJpaDAO<ZCBcActAddress> bcActAddressDao;
-
-    @StoreDAO
     public OJpaDAO<ZCBcMtxInput> bcMtxInputDao;
 
     @StoreDAO
     public OJpaDAO<ZCBcMtxOutput> bcMtxOutputDao;
 
-    @StoreDAO
-    public OJpaDAO<ZCBcMtxSignature> bcMtxSignDao;
-    
     @StoreDAO
     public OJpaDAO<ZCBcNode> bcNodeDao;
 
